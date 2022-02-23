@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/View/pages/add_page.dart';
 import 'View/pages/main_page.dart';
 
 void main() => runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => const MainPage(),
-        // "/test-page": (context) => const TestPage(),
+        "/add-page": (context) => const AddPage(),
         // "/list-page": (context) => const ListPage(),
         // "/fav-page": (context) => const FavPage(),
       },

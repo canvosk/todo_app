@@ -12,12 +12,14 @@ class MyAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String route = "/add-page";
+
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
       //toolbarHeight: 10,
       title: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 0),
         child: Text(title, style: appbarText),
       ),
 
@@ -26,7 +28,9 @@ class MyAppBar extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
           //padding: const EdgeInsets.symmetric(horizontal: 10),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, route);
+            },
             style: addButtonShape,
             child: Row(
               children: const [
@@ -40,15 +44,6 @@ class MyAppBar extends StatelessWidget {
             ),
           ),
         ),
-        // IconButton(
-        //     onPressed: () {
-        //       log("Merhaba");
-        //     },
-        //     color: addButton,
-        //     icon: const Icon(
-        //       Icons.add,
-        //       color: Colors.black,
-        //     )),
       ],
       //systemOverlayStyle: SystemUiOverlayStyle.dark,
     );
