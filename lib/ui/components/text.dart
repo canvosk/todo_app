@@ -5,3 +5,9 @@ const TextStyle header = TextStyle(
   fontWeight: FontWeight.bold,
   color: Color(0xFF211551),
 );
+
+const TextStyle titleText = TextStyle(
+  fontSize: 26.0,
+  fontWeight: FontWeight.bold,
+  color: Color(0xFF211551),
+);
