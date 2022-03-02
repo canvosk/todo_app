@@ -5,24 +5,35 @@ import 'package:todo_app/core/models/tasks.dart';
 
 class TasksState with ChangeNotifier {
   final List<Tasks> _tasks = [
-    Tasks(taskId: 0, title: "Get Start!", subtitle: "Hello Flutter."),
+    Tasks(
+        taskId: 0, title: "Get Start!", subtitle: "Hello Flutter.", degree: 4),
   ];
 
   List<Tasks> get tasks => _tasks;
 
-  void insertTask({String? title, String? subtitle}) {
+  Future<int> insertTask({String? title, String? subtitle, int? degree}) async {
     title ??= title = "Untitled";
     subtitle ??= subtitle = "No Description Added";
+    degree ??= 4;
 
-    Tasks newTasks = Tasks(taskId: 0, title: title, subtitle: subtitle);
+    int _taskId = tasks.first.taskId + 1;
+
+    Tasks newTasks = Tasks(
+        taskId: _taskId, title: title, subtitle: subtitle, degree: degree);
 
     _tasks.insert(0, newTasks);
     log("Title: " + title);
     log("Subtitle: " + subtitle);
     notifyListeners();
+    return _taskId;
   }
 
-  void updateTask({required int id, String? title, String? subtitle}) {
+  void updateDegree({required int id, required int degree}) {
+    tasks[id].degree = degree;
+    log(id.toString() + "Idli taskin derecesi: " + degree.toString());
+  }
+
+  void updateSubtitle({required int id, String? title, String? subtitle}) {
     title ??= tasks[id].subtitle = subtitle;
     subtitle ??= tasks[id].title = title;
 

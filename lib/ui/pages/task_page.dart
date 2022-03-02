@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/ui/components/inputs.dart';
 import 'package:todo_app/ui/components/text.dart';
 import 'package:todo_app/core/state/task_state.dart';
+import 'package:todo_app/ui/widgets/widgets.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
@@ -17,6 +18,11 @@ class _TaskPageState extends State<TaskPage> {
 
   late FocusNode _titleFocus;
   late FocusNode _descriptionFocus;
+
+  //1==red
+  //2==yellow
+  //3==green
+  int taskId = 0;
 
   @override
   void initState() {
@@ -58,9 +64,10 @@ class _TaskPageState extends State<TaskPage> {
                               child: TextField(
                                 focusNode: _titleFocus,
                                 controller: title,
-                                onSubmitted: (value) {
+                                onSubmitted: (value) async {
                                   if (value != "") {
-                                    state.insertTask(title: value);
+                                    taskId =
+                                        await state.insertTask(title: value);
                                   }
                                   _descriptionFocus.requestFocus();
                                 },
@@ -70,6 +77,29 @@ class _TaskPageState extends State<TaskPage> {
                             )
                           ],
                         ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            child: const ChooseDegree(color: Colors.red),
+                            onTap: () {
+                              state.updateDegree(id: taskId, degree: 1);
+                            },
+                          ),
+                          InkWell(
+                            child: const ChooseDegree(color: Colors.yellow),
+                            onTap: () {
+                              state.updateDegree(id: taskId, degree: 2);
+                            },
+                          ),
+                          InkWell(
+                            child: const ChooseDegree(color: Colors.green),
+                            onTap: () {
+                              state.updateDegree(id: taskId, degree: 3);
+                            },
+                          ),
+                        ],
                       ),
                       Visibility(
                         //visible: _contentVisile,
@@ -82,7 +112,9 @@ class _TaskPageState extends State<TaskPage> {
                             controller: subtitle,
                             onSubmitted: (value) {
                               if (value != "") {
-                                state.updateTask(id: 0, subtitle: value);
+                                if (taskId != 0) {
+                                  state.updateSubtitle(id: 0, subtitle: value);
+                                }
                               }
                             },
                             decoration: subtitleTextField,

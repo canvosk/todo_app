@@ -23,8 +23,9 @@ class Header extends StatelessWidget {
 class TaskCardWidget extends StatelessWidget {
   final String? title;
   final String? desc;
+  final int? id;
 
-  const TaskCardWidget({this.title, this.desc});
+  const TaskCardWidget({this.title, this.desc, this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class TaskCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title ?? "Untitled",
+            "$title  $id",
             style: const TextStyle(
               color: Color(0xFF211551),
               fontSize: 22.0,
@@ -67,6 +68,27 @@ class TaskCardWidget extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class ChooseDegree extends StatelessWidget {
+  final Color color;
+  const ChooseDegree({Key? key, required this.color}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        // border: Border.all(
+        //   width: 1,
+        // ),
+      ),
+      width: 32,
+      height: 32,
     );
   }
 }

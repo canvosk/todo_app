@@ -34,15 +34,18 @@ class MainPageState extends State<MainPage> {
                           itemCount: state.tasks.length,
                           itemBuilder: (context, index) {
                             String? title, subtitle;
+                            int? id;
 
                             title = state.tasks[index].title;
                             subtitle = state.tasks[index].subtitle;
+                            id = state.tasks[index].taskId;
 
                             return GestureDetector(
                               onTap: () {},
                               child: TaskCardWidget(
                                 title: title,
                                 desc: subtitle,
+                                id: id,
                               ),
                             );
                           },
