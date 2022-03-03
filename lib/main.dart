@@ -5,6 +5,8 @@ import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/pages/main_page.dart';
 import 'package:todo_app/ui/pages/task_page.dart';
 
+import 'core/models/tasks.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
         routes: {
           "/": (context) => const MainPage(),
           "/task-page": (context) => const TaskPage(),
+          "/list-page": (context) => const TaskPage(),
           // "/list-page": (context) => const ListPage(),
           // "/fav-page": (context) => const FavPage(),
         },

@@ -6,24 +6,28 @@ import 'package:todo_app/core/models/tasks.dart';
 class TasksState with ChangeNotifier {
   final List<Tasks> _tasks = [
     Tasks(
-        taskId: 0, title: "Get Start!", subtitle: "Hello Flutter.", degree: 4),
+        taskId: 0,
+        title: "Get Start!",
+        description: "Hello Flutter.",
+        degree: 4),
   ];
 
   List<Tasks> get tasks => _tasks;
 
-  Future<int> insertTask({String? title, String? subtitle, int? degree}) async {
+  Future<int> insertTask({String? title, String? desc, int? degree}) async {
     title ??= title = "Untitled";
-    subtitle ??= subtitle = "No Description Added";
+    desc ??= desc = "No Description Added";
+
     degree ??= 4;
 
     int _taskId = tasks.first.taskId + 1;
 
-    Tasks newTasks = Tasks(
-        taskId: _taskId, title: title, subtitle: subtitle, degree: degree);
+    Tasks newTasks =
+        Tasks(taskId: _taskId, title: title, description: desc, degree: degree);
 
     _tasks.insert(0, newTasks);
     log("Title: " + title);
-    log("Subtitle: " + subtitle);
+    log("Subtitle: " + desc);
     notifyListeners();
     return _taskId;
   }
@@ -33,15 +37,17 @@ class TasksState with ChangeNotifier {
     log(id.toString() + "Idli taskin derecesi: " + degree.toString());
   }
 
-  void updateSubtitle({required int id, String? title, String? subtitle}) {
-    title ??= tasks[id].subtitle = subtitle;
-    subtitle ??= tasks[id].title = title;
+  void updateSubtitle(
+      {required int id, required String title, required String description}) {
+    final index = tasks.indexWhere((element) => element.taskId == id);
 
-    // tasks[id].title = title;
-    // tasks[id].subtitle = subtitle;
+    log("Gelen id indeksi= " + index.toString());
 
-    // log("Title: " + title);
-    // log("Subtitle: " + subtitle);
+    tasks[index].title = title;
+    tasks[index].description = description;
+
+    log("Title: " + title);
+    log("Subtitle: " + description);
     notifyListeners();
   }
 }

@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/components/colors.dart';
 import 'package:todo_app/ui/components/text.dart';
+import 'package:todo_app/ui/pages/task_page.dart';
 import 'package:todo_app/ui/widgets/widgets.dart';
 
 class MainPage extends StatefulWidget {
@@ -37,11 +40,21 @@ class MainPageState extends State<MainPage> {
                             int? id;
 
                             title = state.tasks[index].title;
-                            subtitle = state.tasks[index].subtitle;
+                            subtitle = state.tasks[index].description;
                             id = state.tasks[index].taskId;
 
                             return GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TaskPage(
+                                      sentedTask: state.tasks[index],
+                                    ),
+                                  ),
+                                );
+                                log("Clicked");
+                              },
                               child: TaskCardWidget(
                                 title: title,
                                 desc: subtitle,
