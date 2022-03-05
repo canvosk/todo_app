@@ -8,6 +8,7 @@ import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/widgets/widgets.dart';
 
 import '../../core/models/tasks.dart';
+import '../../core/models/todos.dart';
 
 class TaskPage extends StatefulWidget {
   final Tasks? sentedTask;
@@ -26,6 +27,9 @@ class _TaskPageState extends State<TaskPage> {
   bool sented = false;
   String _taskTitle = "";
   String _taskDesc = "";
+  List<Todos>? matched;
+
+  bool _contentVisile = false;
 
   //1==red
   //2==yellow
@@ -35,8 +39,10 @@ class _TaskPageState extends State<TaskPage> {
   @override
   void initState() {
     if (widget.sentedTask != null) {
+      taskId = widget.sentedTask!.taskId;
       _taskTitle = widget.sentedTask!.title;
       _taskDesc = widget.sentedTask!.description;
+      _contentVisile = true;
     }
     _titleFocus = FocusNode();
     _descriptionFocus = FocusNode();
@@ -79,8 +85,15 @@ class _TaskPageState extends State<TaskPage> {
                                   ..text = _taskTitle,
                                 onSubmitted: (value) async {
                                   if (value != "") {
-                                    taskId =
-                                        await state.insertTask(title: value);
+                                    if (taskId == 0) {
+                                      taskId =
+                                          await state.insertTask(title: value);
+                                    } else {
+                                      state.updateTask(
+                                          id: taskId,
+                                          title: _taskTitle,
+                                          description: _taskDesc);
+                                    }
                                   }
                                   _descriptionFocus.requestFocus();
                                   setState(() {
@@ -94,29 +107,11 @@ class _TaskPageState extends State<TaskPage> {
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            child: const ChooseDegree(color: Colors.red),
-                            onTap: () {
-                              state.updateDegree(id: taskId, degree: 1);
-                            },
-                          ),
-                          InkWell(
-                            child: const ChooseDegree(color: Colors.yellow),
-                            onTap: () {
-                              state.updateDegree(id: taskId, degree: 2);
-                            },
-                          ),
-                          InkWell(
-                            child: const ChooseDegree(color: Colors.green),
-                            onTap: () {
-                              state.updateDegree(id: taskId, degree: 3);
-                            },
-                          ),
-                        ],
-                      ),
+                      //
+                      //
+                      //degree side
+                      //
+                      //
                       Visibility(
                         //visible: _contentVisile,
                         child: Padding(
@@ -127,10 +122,12 @@ class _TaskPageState extends State<TaskPage> {
                             focusNode: _descriptionFocus,
                             controller: TextEditingController()
                               ..text = _taskDesc,
-                            onSubmitted: (value) {
+                            onSubmitted: (value) async {
                               if (value != "") {
-                                if (taskId != 0) {
-                                  state.updateSubtitle(
+                                if (taskId == 0) {
+                                  taskId = await state.insertTask(desc: value);
+                                } else {
+                                  state.updateTask(
                                       id: taskId,
                                       title: _taskTitle,
                                       description: value);
@@ -142,6 +139,35 @@ class _TaskPageState extends State<TaskPage> {
                           ),
                         ),
                       ),
+                      //
+                      //
+                      //
+
+                      _contentVisile
+                          ? FutureBuilder(
+                              initialData: [],
+                              future: state.getTodo(taskId),
+                              builder: (context, snapshot) {
+                                return Expanded(
+                                  child: ListView.builder(
+                                    itemCount: state.matched.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {},
+                                        child: TodoWidget(
+                                          text: state.matched[index].title,
+                                          isDone: state.matched[index].isDone ==
+                                                  false
+                                              ? false
+                                              : true,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(),
                     ],
                   ),
                 ],

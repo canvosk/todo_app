@@ -46,7 +46,7 @@ class TaskCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "$title  $id",
+            "$title",
             style: const TextStyle(
               color: Color(0xFF211551),
               fontSize: 22.0,
@@ -90,5 +90,61 @@ class ChooseDegree extends StatelessWidget {
       width: 32,
       height: 32,
     );
+  }
+}
+
+class TodoWidget extends StatelessWidget {
+  final String text;
+  final bool isDone;
+
+  const TodoWidget({required this.text, required this.isDone});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24.0,
+        vertical: 8.0,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 20.0,
+            height: 20.0,
+            margin: const EdgeInsets.only(
+              right: 12.0,
+            ),
+            decoration: BoxDecoration(
+                color: isDone ? const Color(0xFF7349FE) : Colors.transparent,
+                borderRadius: BorderRadius.circular(6.0),
+                border: isDone
+                    ? null
+                    : Border.all(color: const Color(0xFF86829D), width: 1.5)),
+            child: const Image(
+              image: AssetImage('assets/images/check_icon.png'),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              text,
+              style: TextStyle(
+                color:
+                    isDone ? const Color(0xFF211551) : const Color(0xFF86829D),
+                fontSize: 16.0,
+                fontWeight: isDone ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
   }
 }

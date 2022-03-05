@@ -32,36 +32,39 @@ class MainPageState extends State<MainPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Header(title: "ToDo`s"),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: state.tasks.length,
-                          itemBuilder: (context, index) {
-                            String? title, subtitle;
-                            int? id;
+                      ScrollConfiguration(
+                        behavior: MyBehavior(),
+                        child: Expanded(
+                          child: ListView.builder(
+                            itemCount: state.tasks.length,
+                            itemBuilder: (context, index) {
+                              String? title, subtitle;
+                              int? id;
 
-                            title = state.tasks[index].title;
-                            subtitle = state.tasks[index].description;
-                            id = state.tasks[index].taskId;
+                              title = state.tasks[index].title;
+                              subtitle = state.tasks[index].description;
+                              id = state.tasks[index].taskId;
 
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TaskPage(
-                                      sentedTask: state.tasks[index],
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TaskPage(
+                                        sentedTask: state.tasks[index],
+                                      ),
                                     ),
-                                  ),
-                                );
-                                log("Clicked");
-                              },
-                              child: TaskCardWidget(
-                                title: title,
-                                desc: subtitle,
-                                id: id,
-                              ),
-                            );
-                          },
+                                  );
+                                  log("Clicked");
+                                },
+                                child: TaskCardWidget(
+                                  title: title,
+                                  desc: subtitle,
+                                  id: id,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
