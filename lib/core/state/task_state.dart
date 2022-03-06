@@ -8,10 +8,10 @@ import '../models/todos.dart';
 class TasksState with ChangeNotifier {
   final List<Tasks> _tasks = [
     Tasks(
-        taskId: 1,
-        title: "Get Start!",
-        description: "Hello Flutter.",
-        degree: 4),
+      taskId: 1,
+      title: "Get Start!",
+      description: "Hello Flutter.",
+    ),
   ];
 
   List<Tasks> get tasks => _tasks;
@@ -38,27 +38,24 @@ class TasksState with ChangeNotifier {
 
   List<Todos> get todos => _todos;
 
-  Future<int> insertTask({String? title, String? desc, int? degree}) async {
+  Future<int> insertTask(
+      {String? title, String? desc, String? todoValue}) async {
     title ??= title = "Untitled";
     desc ??= desc = "No Description Added";
 
-    degree ??= 4;
-
     int _taskId = tasks.first.taskId + 1;
-
-    Tasks newTasks =
-        Tasks(taskId: _taskId, title: title, description: desc, degree: degree);
-
+    Tasks newTasks = Tasks(taskId: _taskId, title: title, description: desc);
     _tasks.insert(0, newTasks);
-    log("Title: " + title);
-    log("Subtitle: " + desc);
+
+    if (todoValue != null) {
+      int lastTodoId = todos.last.todoId + 1;
+      Todos newTodo = Todos(
+          todoId: lastTodoId, taskId: _taskId, title: title, isDone: false);
+      _todos.add(newTodo);
+    }
+
     notifyListeners();
     return _taskId;
-  }
-
-  void updateDegree({required int id, required int degree}) {
-    tasks[id].degree = degree;
-    log(id.toString() + "Idli taskin derecesi: " + degree.toString());
   }
 
   void updateTask(

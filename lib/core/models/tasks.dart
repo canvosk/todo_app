@@ -6,11 +6,7 @@ class Tasks {
   //2 == Yellow Degree
   //3 == Green Degree
   //4 == NonDegree
-  int? degree;
+  //int? degree;
 
-  Tasks(
-      {required this.taskId,
-      required this.title,
-      required this.description,
-      this.degree});
+  Tasks({required this.taskId, required this.title, required this.description});
 }

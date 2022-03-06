@@ -32,9 +32,6 @@ class _TaskPageState extends State<TaskPage> {
 
   bool _contentVisile = false;
 
-  //1==red
-  //2==yellow
-  //3==green
   int _taskId = 0;
 
   @override
@@ -85,6 +82,9 @@ class _TaskPageState extends State<TaskPage> {
                                 focusNode: _titleFocus,
                                 controller: TextEditingController()
                                   ..text = _taskTitle,
+                                onChanged: (value) {
+                                  _taskTitle = value;
+                                },
                                 onSubmitted: (value) async {
                                   if (value != "") {
                                     if (_taskId == 0) {
@@ -124,10 +124,19 @@ class _TaskPageState extends State<TaskPage> {
                             focusNode: _descriptionFocus,
                             controller: TextEditingController()
                               ..text = _taskDesc,
+                            onChanged: (value) {
+                              _taskDesc = value;
+                            },
                             onSubmitted: (value) async {
                               if (value != "") {
                                 if (_taskId == 0) {
-                                  _taskId = await state.insertTask(desc: value);
+                                  if (_taskTitle != "") {
+                                    _taskId = await state.insertTask(
+                                        title: _taskTitle, desc: value);
+                                  } else {
+                                    _taskId =
+                                        await state.insertTask(desc: value);
+                                  }
                                 } else {
                                   state.updateTask(
                                       id: _taskId,
@@ -135,6 +144,9 @@ class _TaskPageState extends State<TaskPage> {
                                       description: value);
                                   _taskDesc = value;
                                 }
+                                setState(() {
+                                  _taskDesc = value;
+                                });
                                 _todoFocus.requestFocus();
                               }
                             },
@@ -194,13 +206,20 @@ class _TaskPageState extends State<TaskPage> {
                               child: TextField(
                                 focusNode: _todoFocus,
                                 controller: TextEditingController()..text = "",
-                                onSubmitted: (value) {
+                                onSubmitted: (value) async {
                                   if (_taskId != 0) {
                                     state.addTodo(
                                       title: value,
                                       taskId: _taskId,
                                     );
+                                  } else {
+                                    _taskId = await state.insertTask(
+                                      title: _taskTitle,
+                                      desc: _taskDesc,
+                                      todoValue: value,
+                                    );
                                   }
+                                  setState(() {});
                                 },
                                 decoration: const InputDecoration(
                                   hintText: "Enter Todo item...",
