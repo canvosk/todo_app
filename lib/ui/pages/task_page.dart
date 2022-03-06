@@ -271,18 +271,12 @@ class _TaskPageState extends State<TaskPage> {
                       bottom: 24.0,
                       right: 24.0,
                       child: GestureDetector(
-                        onTap: () async {
+                        onTap: () {
                           if (_taskId != 0) {
-                            await _showDialog(context, state, _taskId, true);
-
-                            // if (didIt == true) {
-                            //   Navigator.pop(context);
-                            // }
-
-                            await Future.delayed(const Duration(seconds: 1),
-                                () {
+                            _showDialog(context, state, _taskId, true);
+                            if (didIt == true) {
                               Navigator.pop(context);
-                            });
+                            }
                           }
                         },
                         child: const FloatingButton(
@@ -300,8 +294,7 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 
-  Future<void> _showDialog(
-      BuildContext context, TasksState state, int id, bool task) async {
+  void _showDialog(BuildContext context, TasksState state, int id, bool task) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -350,6 +343,12 @@ class _TaskPageState extends State<TaskPage> {
               )
             ],
           );
+        }).then((value) {
+      if (value == true) {
+        setState(() {
+          didIt = true;
         });
+      }
+    });
   }
 }
