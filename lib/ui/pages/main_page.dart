@@ -25,7 +25,7 @@ class MainPageState extends State<MainPage> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              color: mainPagedBG,
+              color: mainPageBG,
               child: Stack(
                 children: [
                   Column(
@@ -76,19 +76,9 @@ class MainPageState extends State<MainPage> {
                       onTap: () {
                         Navigator.pushNamed(context, "/task-page");
                       },
-                      child: Container(
-                        width: 60.0,
-                        height: 60.0,
-                        decoration: BoxDecoration(
-                          gradient: addButton,
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: const Image(
-                          image: AssetImage(
-                            "assets/images/add_icon.png",
-                          ),
-                        ),
-                      ),
+                      child: const FloatingButton(
+                          imagePath: "assets/images/add_icon.png",
+                          addGradient: true),
                     ),
                   )
                 ],

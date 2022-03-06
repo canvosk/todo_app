@@ -75,6 +75,13 @@ class TasksState with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteTask(int id) {
+    final index = tasks.indexWhere((x) => x.taskId == id);
+    tasks.removeAt(index);
+    log(index.toString() + " indexe ait task silindi.");
+    notifyListeners();
+  }
+
   List<Todos> matched = [];
   Future<List<Todos>> getTodo(int taskId) async {
     matched.clear();
@@ -85,5 +92,14 @@ class TasksState with ChangeNotifier {
     }
 
     return matched;
+  }
+
+  void addTodo({String? title, required int taskId}) {
+    title ??= title = "Untitled";
+    int lastTodoId = todos.last.todoId + 1;
+    Todos newTodo =
+        Todos(todoId: lastTodoId, taskId: taskId, title: title, isDone: false);
+    _todos.add(newTodo);
+    notifyListeners();
   }
 }

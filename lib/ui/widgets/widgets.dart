@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/ui/components/colors.dart';
 import 'package:todo_app/ui/components/text.dart';
 
 class Header extends StatelessWidget {
@@ -146,5 +147,29 @@ class MyBehavior extends ScrollBehavior {
   Widget buildOverscrollIndicator(
       BuildContext context, Widget child, ScrollableDetails details) {
     return child;
+  }
+}
+
+class FloatingButton extends StatelessWidget {
+  final String imagePath;
+  final bool addGradient;
+  const FloatingButton(
+      {Key? key, required this.imagePath, required this.addGradient})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60.0,
+      height: 60.0,
+      decoration: BoxDecoration(
+        gradient: addGradient ? addButton : null,
+        color: addGradient ? null : deleteButton,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      child: Image(
+        image: AssetImage(imagePath),
+      ),
+    );
   }
 }
