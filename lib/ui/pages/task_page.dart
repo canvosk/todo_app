@@ -31,7 +31,7 @@ class _TaskPageState extends State<TaskPage> {
   String _taskDesc = "";
 
   bool _contentVisile = false;
-
+  bool didIt = false;
   int _taskId = 0;
 
   @override
@@ -167,7 +167,7 @@ class _TaskPageState extends State<TaskPage> {
                               itemCount: state.matched.length,
                               itemBuilder: (context, index) {
                                 return Slidable(
-                                  //key: UniqueKey(),
+                                  key: UniqueKey(),
                                   endActionPane: ActionPane(
                                     extentRatio: 0.3,
                                     motion: const ScrollMotion(),
@@ -180,8 +180,10 @@ class _TaskPageState extends State<TaskPage> {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) {
+                                          int _todoId =
+                                              state.todos[index].todoId;
                                           _showDialog(
-                                              context, state, _taskId, false);
+                                              context, state, _todoId, false);
                                         },
                                         backgroundColor:
                                             const Color(0xFFFE4A49),
@@ -269,10 +271,18 @@ class _TaskPageState extends State<TaskPage> {
                       bottom: 24.0,
                       right: 24.0,
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_taskId != 0) {
-                            _showDialog(context, state, _taskId, true);
-                            //Navigator.pop(context);
+                            await _showDialog(context, state, _taskId, true);
+
+                            // if (didIt == true) {
+                            //   Navigator.pop(context);
+                            // }
+
+                            await Future.delayed(const Duration(seconds: 1),
+                                () {
+                              Navigator.pop(context);
+                            });
                           }
                         },
                         child: const FloatingButton(
@@ -290,7 +300,8 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 
-  void _showDialog(BuildContext context, TasksState state, int id, bool task) {
+  Future<void> _showDialog(
+      BuildContext context, TasksState state, int id, bool task) async {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -311,7 +322,8 @@ class _TaskPageState extends State<TaskPage> {
                       if (task == true) {
                         if (id != 0) {
                           state.deleteTask(id);
-                          Navigator.pushNamed(context, "/");
+                          Navigator.pop(context);
+                          //Navigator.pushNamed(context, "/");
                         }
                       } else {
                         if (id != 0) {
@@ -319,11 +331,17 @@ class _TaskPageState extends State<TaskPage> {
                           Navigator.pop(context);
                         }
                       }
+                      setState(() {
+                        didIt = true;
+                      });
                     },
                     child: const Text("Yes"),
                   ),
                   TextButton(
                     onPressed: () {
+                      setState(() {
+                        didIt = false;
+                      });
                       Navigator.pop(context);
                     },
                     child: const Text("No"),
@@ -335,17 +353,3 @@ class _TaskPageState extends State<TaskPage> {
         });
   }
 }
-
-// return GestureDetector(
-//                                   onTap: () {
-//                                     state.updateTodoDone(
-//                                         state.matched[index].todoId);
-//                                     // setState(() {});
-//                                   },
-//                                   child: TodoWidget(
-//                                     text: state.matched[index].title,
-//                                     isDone: state.matched[index].isDone == false
-//                                         ? false
-//                                         : true,
-//                                   ),
-//                                 );

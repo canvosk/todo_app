@@ -55,7 +55,6 @@ class MainPageState extends State<MainPage> {
                                       ),
                                     ),
                                   );
-                                  log("Clicked");
                                 },
                                 child: TaskCardWidget(
                                   title: title,

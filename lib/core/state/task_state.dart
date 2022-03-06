@@ -89,8 +89,9 @@ class TasksState with ChangeNotifier {
     notifyListeners();
   }
 
+  List<Todos> toRemove = [];
   void deleteTask(int id) {
-    List<Todos> toRemove = [];
+    toRemove.clear();
     final index = tasks.indexWhere((x) => x.taskId == id);
     tasks.removeAt(index);
     for (var x in todos) {
