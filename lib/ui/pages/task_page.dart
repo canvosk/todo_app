@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/ui/components/inputs.dart';
 import 'package:todo_app/ui/components/text.dart';
@@ -28,7 +29,6 @@ class _TaskPageState extends State<TaskPage> {
   bool sented = false;
   String _taskTitle = "";
   String _taskDesc = "";
-  List<Todos>? matched;
 
   bool _contentVisile = false;
 
@@ -166,17 +166,43 @@ class _TaskPageState extends State<TaskPage> {
                             child: ListView.builder(
                               itemCount: state.matched.length,
                               itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    state.updateTodoDone(
-                                        state.matched[index].todoId);
-                                    // setState(() {});
-                                  },
-                                  child: TodoWidget(
-                                    text: state.matched[index].title,
-                                    isDone: state.matched[index].isDone == false
-                                        ? false
-                                        : true,
+                                return Slidable(
+                                  //key: UniqueKey(),
+                                  endActionPane: ActionPane(
+                                    extentRatio: 0.3,
+                                    motion: const ScrollMotion(),
+                                    dismissible: DismissiblePane(
+                                      onDismissed: () {
+                                        state.deleteTodo(
+                                            state.matched[index].todoId);
+                                      },
+                                    ),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {
+                                          _showDialog(
+                                              context, state, _taskId, false);
+                                        },
+                                        backgroundColor:
+                                            const Color(0xFFFE4A49),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete,
+                                      )
+                                    ],
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      state.updateTodoDone(
+                                          state.matched[index].todoId);
+                                      // setState(() {});
+                                    },
+                                    child: TodoWidget(
+                                      text: state.matched[index].title,
+                                      isDone:
+                                          state.matched[index].isDone == false
+                                              ? false
+                                              : true,
+                                    ),
                                   ),
                                 );
                               },
@@ -245,8 +271,8 @@ class _TaskPageState extends State<TaskPage> {
                       child: GestureDetector(
                         onTap: () {
                           if (_taskId != 0) {
-                            state.deleteTask(_taskId);
-                            Navigator.pop(context);
+                            _showDialog(context, state, _taskId, true);
+                            //Navigator.pop(context);
                           }
                         },
                         child: const FloatingButton(
@@ -263,4 +289,63 @@ class _TaskPageState extends State<TaskPage> {
       },
     );
   }
+
+  void _showDialog(BuildContext context, TasksState state, int id, bool task) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Do you want to delete?"),
+            content: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 85.0),
+              child: const FloatingButton(
+                  imagePath: "assets/images/delete_icon.png",
+                  addGradient: false),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      if (task == true) {
+                        if (id != 0) {
+                          state.deleteTask(id);
+                          Navigator.pushNamed(context, "/");
+                        }
+                      } else {
+                        if (id != 0) {
+                          state.deleteTodo(id);
+                          Navigator.pop(context);
+                        }
+                      }
+                    },
+                    child: const Text("Yes"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("No"),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+  }
 }
+
+// return GestureDetector(
+//                                   onTap: () {
+//                                     state.updateTodoDone(
+//                                         state.matched[index].todoId);
+//                                     // setState(() {});
+//                                   },
+//                                   child: TodoWidget(
+//                                     text: state.matched[index].title,
+//                                     isDone: state.matched[index].isDone == false
+//                                         ? false
+//                                         : true,
+//                                   ),
+//                                 );

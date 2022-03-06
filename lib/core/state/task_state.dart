@@ -40,20 +40,37 @@ class TasksState with ChangeNotifier {
 
   Future<int> insertTask(
       {String? title, String? desc, String? todoValue}) async {
+    if (title == "") {
+      title = "Untitled";
+    }
+    if (desc == "") {
+      desc = "No Description Added";
+    }
+
     title ??= title = "Untitled";
     desc ??= desc = "No Description Added";
+    int _taskId;
+    if (tasks.isEmpty) {
+      _taskId = 1;
+    } else {
+      _taskId = tasks.first.taskId + 1;
+    }
 
-    int _taskId = tasks.first.taskId + 1;
     Tasks newTasks = Tasks(taskId: _taskId, title: title, description: desc);
     _tasks.insert(0, newTasks);
 
     if (todoValue != null) {
-      int lastTodoId = todos.last.todoId + 1;
+      int lastTodoId;
+      if (todos.isEmpty) {
+        lastTodoId = 1;
+      } else {
+        lastTodoId = todos.last.todoId + 1;
+      }
+
       Todos newTodo = Todos(
-          todoId: lastTodoId, taskId: _taskId, title: title, isDone: false);
+          todoId: lastTodoId, taskId: _taskId, title: todoValue, isDone: false);
       _todos.add(newTodo);
     }
-
     notifyListeners();
     return _taskId;
   }
@@ -73,8 +90,19 @@ class TasksState with ChangeNotifier {
   }
 
   void deleteTask(int id) {
+    List<Todos> toRemove = [];
     final index = tasks.indexWhere((x) => x.taskId == id);
     tasks.removeAt(index);
+    for (var x in todos) {
+      if (x.taskId == id) {
+        final index = todos.indexWhere((element) => element.todoId == x.todoId);
+        toRemove.add(todos[index]);
+        //todos.removeAt(index);
+        //log(x.todoId.toString() + " idli todo silindi.");
+      }
+    }
+    todos.removeWhere((e) => toRemove.contains(e));
+    log("Silinenler: " + toRemove.toString());
     log(index.toString() + " indexe ait task silindi.");
     notifyListeners();
   }
@@ -93,10 +121,23 @@ class TasksState with ChangeNotifier {
 
   void addTodo({String? title, required int taskId}) {
     title ??= title = "Untitled";
-    int lastTodoId = todos.last.todoId + 1;
+    int lastTodoId;
+
+    if (todos.isEmpty) {
+      lastTodoId = 1;
+    } else {
+      lastTodoId = todos.last.todoId + 1;
+    }
+
     Todos newTodo =
         Todos(todoId: lastTodoId, taskId: taskId, title: title, isDone: false);
     _todos.add(newTodo);
+    notifyListeners();
+  }
+
+  void deleteTodo(int id) {
+    final index = todos.indexWhere((element) => element.todoId == id);
+    todos.removeAt(index);
     notifyListeners();
   }
 
