@@ -167,7 +167,11 @@ class _TaskPageState extends State<TaskPage> {
                               itemCount: state.matched.length,
                               itemBuilder: (context, index) {
                                 return GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    state.updateTodoDone(
+                                        state.matched[index].todoId);
+                                    // setState(() {});
+                                  },
                                   child: TodoWidget(
                                     text: state.matched[index].title,
                                     isDone: state.matched[index].isDone == false
@@ -219,7 +223,8 @@ class _TaskPageState extends State<TaskPage> {
                                       todoValue: value,
                                     );
                                   }
-                                  setState(() {});
+                                  //setState(() {});
+                                  _todoFocus.requestFocus();
                                 },
                                 decoration: const InputDecoration(
                                   hintText: "Enter Todo item...",

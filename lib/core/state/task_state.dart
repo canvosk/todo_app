@@ -99,4 +99,10 @@ class TasksState with ChangeNotifier {
     _todos.add(newTodo);
     notifyListeners();
   }
+
+  void updateTodoDone(int todoId) {
+    final index = todos.indexWhere((element) => element.todoId == todoId);
+    todos[index].isDone = !todos[index].isDone;
+    notifyListeners();
+  }
 }
