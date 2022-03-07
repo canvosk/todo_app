@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/core/database_helper.dart';
 import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/components/colors.dart';
 import 'package:todo_app/ui/components/text.dart';
@@ -16,6 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  DatabaseHelper db = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksState>(
@@ -46,36 +49,34 @@ class MainPageState extends State<MainPage> {
                       //
                       ScrollConfiguration(
                         behavior: MyBehavior(),
-                        child: Expanded(
-                          child: ListView.builder(
-                            itemCount: state.tasks.length,
-                            itemBuilder: (context, index) {
-                              String? title, subtitle;
-                              int? id;
+                        child: ListView.builder(
+                          itemCount: ,
+                          itemBuilder: (context, index) {
+                            String? title, subtitle;
+                            int? id;
 
-                              title = state.tasks[index].title;
-                              subtitle = state.tasks[index].description;
-                              id = state.tasks[index].taskId;
+                            title = state.tasks[index].title;
+                            subtitle = state.tasks[index].description;
+                            id = state.tasks[index].taskId;
 
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TaskPage(
-                                        sentedTask: state.tasks[index],
-                                      ),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TaskPage(
+                                      sentedTask: state.tasks[index],
                                     ),
-                                  );
-                                },
-                                child: TaskCardWidget(
-                                  title: title,
-                                  desc: subtitle,
-                                  id: id,
-                                ),
-                              );
-                            },
-                          ),
+                                  ),
+                                );
+                              },
+                              child: TaskCardWidget(
+                                title: title,
+                                desc: subtitle,
+                                id: id,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

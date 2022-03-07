@@ -2,7 +2,7 @@ class Todos {
   final int todoId;
   final int taskId;
   final String title;
-  bool isDone;
+  int isDone;
 
   Todos(
       {required this.todoId,

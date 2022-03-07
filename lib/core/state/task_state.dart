@@ -1,42 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
+import 'package:todo_app/core/database_helper.dart';
 import 'package:todo_app/core/models/tasks.dart';
 
 import '../models/todos.dart';
 
 class TasksState with ChangeNotifier {
-  final List<Tasks> _tasks = [
-    Tasks(
-      taskId: 1,
-      title: "Get Start!",
-      description: "Hello Flutter.",
-    ),
-  ];
+  final DatabaseHelper db = DatabaseHelper();
 
-  List<Tasks> get tasks => _tasks;
+  Future<List<Tasks>> get tasks async => await db.getTasks();
 
-  final List<Todos> _todos = [
-    Todos(
-        todoId: 1,
-        taskId: 1,
-        title: "First of all beleive ur self!",
-        isDone: false),
-    Todos(
-      todoId: 2,
-      taskId: 1,
-      title: "Create a new task",
-      isDone: false,
-    ),
-    Todos(
-      todoId: 3,
-      taskId: 1,
-      title: "Create a new ToDo",
-      isDone: false,
-    ),
-  ];
-
-  List<Todos> get todos => _todos;
+  Future<List<Todos>> get todos async => await db.getTodos();
 
   Future<int> insertTask(
       {String? title, String? desc, String? todoValue}) async {
@@ -56,8 +31,10 @@ class TasksState with ChangeNotifier {
       _taskId = tasks.first.taskId + 1;
     }
 
-    Tasks newTasks = Tasks(taskId: _taskId, title: title, description: desc);
-    _tasks.insert(0, newTasks);
+    db.insertTask(taskId: _taskId, title: title, desc: desc);
+
+    //Tasks newTasks = Tasks(taskId: _taskId, title: title, description: desc);
+    //_tasks.insert(0, newTasks);
 
     if (todoValue != null) {
       int lastTodoId;
@@ -67,9 +44,12 @@ class TasksState with ChangeNotifier {
         lastTodoId = todos.last.todoId + 1;
       }
 
-      Todos newTodo = Todos(
-          todoId: lastTodoId, taskId: _taskId, title: todoValue, isDone: false);
-      _todos.add(newTodo);
+      db.insertTodo(
+          id: lastTodoId, taskId: _taskId, value: todoValue, isDone: 0);
+
+      // Todos newTodo = Todos(
+      //     todoId: lastTodoId, taskId: _taskId, title: todoValue, isDone: 0);
+      // _todos.add(newTodo);
     }
     notifyListeners();
     return _taskId;
@@ -137,9 +117,9 @@ class TasksState with ChangeNotifier {
       lastTodoId = todos.last.todoId + 1;
     }
 
-    Todos newTodo =
-        Todos(todoId: lastTodoId, taskId: taskId, title: title, isDone: false);
-    _todos.add(newTodo);
+    // Todos newTodo =
+    //     Todos(todoId: lastTodoId, taskId: taskId, title: title, isDone: false);
+    //_todos.add(newTodo);
     notifyListeners();
   }
 
