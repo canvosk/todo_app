@@ -9,9 +9,24 @@ import '../models/todos.dart';
 class TasksState with ChangeNotifier {
   final DatabaseHelper db = DatabaseHelper();
 
-  Future<List<Tasks>> get tasks async => await db.getTasks();
+  List<Tasks> taskList = [];
+  List<Todos> todoList = [];
 
-  Future<List<Todos>> get todos async => await db.getTodos();
+  Future<List<Tasks>> fetchTasks() async {
+    taskList = await db.getTasks();
+    notifyListeners();
+    return taskList;
+  }
+
+  Future<List<Todos>> fetchTodo() async {
+    todoList = await db.getTodos();
+    notifyListeners();
+    return todoList;
+  }
+
+  //Future<List<Tasks>> get tasks async => await db.getTasks();
+
+  //Future<List<Todos>> get todos async => await db.getTodos();
 
   Future<int> insertTask(
       {String? title, String? desc, String? todoValue}) async {
@@ -24,11 +39,12 @@ class TasksState with ChangeNotifier {
 
     title ??= title = "Untitled";
     desc ??= desc = "No Description Added";
+    fetchTasks();
     int _taskId;
-    if (tasks.isEmpty) {
+    if (taskList.isEmpty) {
       _taskId = 1;
     } else {
-      _taskId = tasks.first.taskId + 1;
+      _taskId = taskList.first.taskId + 1;
     }
 
     db.insertTask(taskId: _taskId, title: title, desc: desc);
@@ -37,11 +53,12 @@ class TasksState with ChangeNotifier {
     //_tasks.insert(0, newTasks);
 
     if (todoValue != null) {
+      fetchTodo();
       int lastTodoId;
-      if (todos.isEmpty) {
+      if (todoList.isEmpty) {
         lastTodoId = 1;
       } else {
-        lastTodoId = todos.last.todoId + 1;
+        lastTodoId = todoList.last.todoId + 1;
       }
 
       db.insertTodo(
@@ -57,7 +74,7 @@ class TasksState with ChangeNotifier {
 
   void updateTask(
       {required int id, required String title, required String description}) {
-    final index = tasks.indexWhere((element) => element.taskId == id);
+    final index = taskList.indexWhere((element) => element.taskId == id);
 
     log("Gelen id indeksi= " + index.toString());
 
@@ -68,8 +85,11 @@ class TasksState with ChangeNotifier {
       description = "No Description Added";
     }
 
-    tasks[index].title = title;
-    tasks[index].description = description;
+    db.updateTasks(
+      id: id,
+      title: title,
+      description: description,
+    );
 
     log("Title: " + title);
     log("Subtitle: " + description);
@@ -79,26 +99,24 @@ class TasksState with ChangeNotifier {
   List<Todos> toRemove = [];
   void deleteTask(int id) {
     toRemove.clear();
-    final index = tasks.indexWhere((x) => x.taskId == id);
-    tasks.removeAt(index);
-    for (var x in todos) {
+    db.deleteTasks(id: id);
+    for (var x in todoList) {
       if (x.taskId == id) {
-        final index = todos.indexWhere((element) => element.todoId == x.todoId);
-        toRemove.add(todos[index]);
-        //todos.removeAt(index);
-        //log(x.todoId.toString() + " idli todo silindi.");
+        final index =
+            todoList.indexWhere((element) => element.todoId == x.todoId);
+        toRemove.add(todoList[index]);
       }
     }
-    todos.removeWhere((e) => toRemove.contains(e));
-    log("Silinenler: " + toRemove.toString());
-    log(index.toString() + " indexe ait task silindi.");
+    for (var x in toRemove) {
+      db.deleteTodo(id: x.todoId);
+    }
     notifyListeners();
   }
 
   List<Todos> matched = [];
   Future<List<Todos>> getTodo(int taskId) async {
     matched.clear();
-    for (var x in todos) {
+    for (var x in todoList) {
       if (x.taskId == taskId) {
         matched.add(x);
       }
@@ -110,28 +128,41 @@ class TasksState with ChangeNotifier {
   void addTodo({String? title, required int taskId}) {
     title ??= title = "Untitled";
     int lastTodoId;
-
-    if (todos.isEmpty) {
+    if (todoList.isEmpty) {
       lastTodoId = 1;
     } else {
-      lastTodoId = todos.last.todoId + 1;
+      lastTodoId = todoList.last.todoId + 1;
     }
 
-    // Todos newTodo =
-    //     Todos(todoId: lastTodoId, taskId: taskId, title: title, isDone: false);
-    //_todos.add(newTodo);
+    db.insertTodo(
+      id: lastTodoId,
+      taskId: taskId,
+      value: title,
+      isDone: 0,
+    );
+
     notifyListeners();
   }
 
   void deleteTodo(int id) {
-    final index = todos.indexWhere((element) => element.todoId == id);
-    todos.removeAt(index);
+    db.deleteTodo(id: id);
     notifyListeners();
   }
 
   void updateTodoDone(int todoId) {
-    final index = todos.indexWhere((element) => element.todoId == todoId);
-    todos[index].isDone = !todos[index].isDone;
+    int value;
+    final index = todoList.indexWhere((element) => element.todoId == todoId);
+    if (todoList[index].isDone == 0) {
+      value = 1;
+    } else {
+      value = 0;
+    }
+
+    db.updateTodo(
+      id: todoId,
+      value: value,
+    );
+
     notifyListeners();
   }
 }

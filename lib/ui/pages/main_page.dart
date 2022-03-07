@@ -9,6 +9,8 @@ import 'package:todo_app/ui/components/text.dart';
 import 'package:todo_app/ui/pages/task_page.dart';
 import 'package:todo_app/ui/widgets/widgets.dart';
 
+import '../../core/models/tasks.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -18,6 +20,17 @@ class MainPage extends StatefulWidget {
 
 class MainPageState extends State<MainPage> {
   DatabaseHelper db = DatabaseHelper();
+  List<Tasks> taskList = [];
+
+  Future<List<Tasks>> fetchTasks() async {
+    return taskList = await db.getTasks();
+  }
+
+  @override
+  void initState() {
+    fetchTasks();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,36 +60,38 @@ class MainPageState extends State<MainPage> {
                       // List Tasks
                       //
                       //
-                      ScrollConfiguration(
-                        behavior: MyBehavior(),
-                        child: ListView.builder(
-                          itemCount: ,
-                          itemBuilder: (context, index) {
-                            String? title, subtitle;
-                            int? id;
+                      Expanded(
+                        child: ScrollConfiguration(
+                          behavior: MyBehavior(),
+                          child: ListView.builder(
+                            itemCount: taskList.length,
+                            itemBuilder: (context, index) {
+                              String? title, subtitle;
+                              int? id;
 
-                            title = state.tasks[index].title;
-                            subtitle = state.tasks[index].description;
-                            id = state.tasks[index].taskId;
+                              title = taskList[index].title;
+                              subtitle = taskList[index].description;
+                              id = taskList[index].taskId;
 
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TaskPage(
-                                      sentedTask: state.tasks[index],
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TaskPage(
+                                        sentedTask: taskList[index],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: TaskCardWidget(
-                                title: title,
-                                desc: subtitle,
-                                id: id,
-                              ),
-                            );
-                          },
+                                  );
+                                },
+                                child: TaskCardWidget(
+                                  title: title,
+                                  desc: subtitle,
+                                  id: id,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],

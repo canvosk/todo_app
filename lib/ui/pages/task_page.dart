@@ -231,10 +231,9 @@ class _TaskPageState extends State<TaskPage> {
                                     },
                                     child: TodoWidget(
                                       text: state.matched[index].title,
-                                      isDone:
-                                          state.matched[index].isDone == false
-                                              ? false
-                                              : true,
+                                      isDone: state.matched[index].isDone == 1
+                                          ? false
+                                          : true,
                                     ),
                                   ),
                                 );
