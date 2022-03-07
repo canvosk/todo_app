@@ -84,9 +84,6 @@ class ChooseDegree extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        // border: Border.all(
-        //   width: 1,
-        // ),
       ),
       width: 32,
       height: 32,
@@ -127,7 +124,6 @@ class TodoWidget extends StatelessWidget {
           ),
           Flexible(
             child: Container(
-              //width: double.infinity,
               margin: const EdgeInsets.all(0),
               child: Text(
                 text,

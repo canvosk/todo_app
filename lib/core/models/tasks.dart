@@ -1,12 +1,19 @@
 class Tasks {
-  final int taskId;
+  final int id;
   String title;
   String description;
-  //1 == Red Degree
-  //2 == Yellow Degree
-  //3 == Green Degree
-  //4 == NonDegree
-  //int? degree;
 
-  Tasks({required this.taskId, required this.title, required this.description});
+  Tasks({
+    required this.id,
+    required this.title,
+    required this.description,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+    };
+  }
 }

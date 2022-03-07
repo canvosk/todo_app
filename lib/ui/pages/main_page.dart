@@ -1,15 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/core/database_helper.dart';
 import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/components/colors.dart';
-import 'package:todo_app/ui/components/text.dart';
 import 'package:todo_app/ui/pages/task_page.dart';
 import 'package:todo_app/ui/widgets/widgets.dart';
-
-import '../../core/models/tasks.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -19,19 +13,6 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
-  DatabaseHelper db = DatabaseHelper();
-  List<Tasks> taskList = [];
-
-  Future<List<Tasks>> fetchTasks() async {
-    return taskList = await db.getTasks();
-  }
-
-  @override
-  void initState() {
-    fetchTasks();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<TasksState>(
@@ -64,14 +45,14 @@ class MainPageState extends State<MainPage> {
                         child: ScrollConfiguration(
                           behavior: MyBehavior(),
                           child: ListView.builder(
-                            itemCount: taskList.length,
+                            itemCount: state.taskList.length,
                             itemBuilder: (context, index) {
                               String? title, subtitle;
                               int? id;
 
-                              title = taskList[index].title;
-                              subtitle = taskList[index].description;
-                              id = taskList[index].taskId;
+                              title = state.taskList[index].title;
+                              subtitle = state.taskList[index].description;
+                              id = state.taskList[index].id;
 
                               return GestureDetector(
                                 onTap: () {
@@ -79,7 +60,7 @@ class MainPageState extends State<MainPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => TaskPage(
-                                        sentedTask: taskList[index],
+                                        sentedTask: state.taskList[index],
                                       ),
                                     ),
                                   );

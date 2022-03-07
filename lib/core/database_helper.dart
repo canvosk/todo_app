@@ -1,23 +1,25 @@
-import 'dart:developer';
-
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:todo_app/core/models/tasks.dart';
 
-import 'models/todos.dart';
+class DatabaseHelper with ChangeNotifier {
+  DatabaseHelper() {
+    database();
+  }
 
-class DatabaseHelper {
   Future<Database> database() async {
-    return openDatabase(
+    var _db = openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: ((db, version) async {
         await db.execute(
             "CREATE TABLE tasks(id INTEGER, title TEXT, description TEXT)");
         await db.execute(
-            "CREATE TABLE todos(id INTEGER, taskId INTEGER, title TEXT, isDone int)");
+            "CREATE TABLE todos(id INTEGER, taskId INTEGER, title TEXT, isDone INTEGER)");
       }),
       version: 1,
     );
+    notifyListeners();
+    return _db;
   }
 
   Future<void> insertTask(
@@ -25,7 +27,13 @@ class DatabaseHelper {
       required String title,
       required String desc}) async {
     Database _db = await database();
-    await _db.execute("INSERT INTO tasks VALUES($taskId,'$title','$desc')");
+    Map<String, Object?> values = {
+      'id': taskId,
+      'title': title,
+      'description': desc,
+    };
+    _db.insert('tasks', values);
+    notifyListeners();
   }
 
   Future<void> insertTodo({
@@ -35,32 +43,28 @@ class DatabaseHelper {
     required int isDone,
   }) async {
     Database _db = await database();
-    await _db.execute("INSERT INTO todos VALUES($id,$taskId,'$value',$isDone)");
-    log("Ekleme yapildi");
+    Map<String, Object?> values = {
+      'id': id,
+      'taskId': taskId,
+      'title': value,
+      'isDone': isDone,
+    };
+    _db.insert('todos', values);
+    notifyListeners();
   }
 
-  Future<List<Tasks>> getTasks() async {
+  Future<List<Map<String, dynamic>>> getTasks() async {
     Database _db = await database();
-    List<Map<String, dynamic>> taskMap =
-        await _db.query('tasks', orderBy: 'id DESC');
-    return List.generate(taskMap.length, (index) {
-      return Tasks(
-          taskId: taskMap[index]['id'],
-          title: taskMap[index]['title'],
-          description: taskMap[index]['description']);
-    });
+    var res = await _db.query('tasks');
+    notifyListeners();
+    return res;
   }
 
-  Future<List<Todos>> getTodos() async {
+  Future<List<Map<String, dynamic>>> getTodos() async {
     Database _db = await database();
-    List<Map<String, dynamic>> todoMap = await _db.query('todos');
-    return List.generate(todoMap.length, (index) {
-      return Todos(
-          todoId: todoMap[index]['id'],
-          taskId: todoMap[index]['taskId'],
-          title: todoMap[index]['title'],
-          isDone: todoMap[index]['isDone']);
-    });
+    var res = await _db.query('todos');
+    notifyListeners();
+    return res;
   }
 
   Future<void> updateTasks(
@@ -68,18 +72,24 @@ class DatabaseHelper {
       required String title,
       required String description}) async {
     Database _db = await database();
-    await _db.execute(
-        "UPDATE tasks SET title='$title',description='$description' where id=$id");
+    Map<String, Object?> toUpdate = {
+      'title': title,
+      'description': description,
+    };
+    _db.update('tasks', toUpdate, where: 'id=$id');
+    notifyListeners();
   }
 
   Future<void> updateTodo({required int id, required int value}) async {
     Database _db = await database();
-    await _db.execute("UPDATE todo SET isDone='$value' where id=$id");
+    await _db.execute("UPDATE todos SET isDone=$value where id=$id");
+    notifyListeners();
   }
 
   Future<void> deleteTasks({required int id}) async {
     Database _db = await database();
     await _db.execute("DELETE FROM tasks where id=$id");
+    notifyListeners();
   }
 
   Future<void> deleteTodo({required int id}) async {

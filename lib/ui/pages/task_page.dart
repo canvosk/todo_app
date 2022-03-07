@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +7,6 @@ import 'package:todo_app/core/state/task_state.dart';
 import 'package:todo_app/ui/widgets/widgets.dart';
 
 import '../../core/models/tasks.dart';
-import '../../core/models/todos.dart';
 
 class TaskPage extends StatefulWidget {
   final Tasks? sentedTask;
@@ -36,7 +33,7 @@ class _TaskPageState extends State<TaskPage> {
   @override
   void initState() {
     if (widget.sentedTask != null) {
-      _taskId = widget.sentedTask!.taskId;
+      _taskId = widget.sentedTask!.id;
       _taskTitle = widget.sentedTask!.title;
       _taskDesc = widget.sentedTask!.description;
       _contentVisile = true;
@@ -165,7 +162,6 @@ class _TaskPageState extends State<TaskPage> {
                       //
                       //
                       Visibility(
-                        //visible: _contentVisile,
                         child: Padding(
                           padding: const EdgeInsets.only(
                             bottom: 12.0,
@@ -190,54 +186,56 @@ class _TaskPageState extends State<TaskPage> {
                       //
                       //
                       FutureBuilder(
-                        initialData: [],
+                        initialData: const [],
                         future: state.getTodo(_taskId),
                         builder: (context, snapshot) {
                           return Expanded(
-                            child: ListView.builder(
-                              itemCount: state.matched.length,
-                              itemBuilder: (context, index) {
-                                return Slidable(
-                                  key: UniqueKey(),
-                                  endActionPane: ActionPane(
-                                    extentRatio: 0.3,
-                                    motion: const ScrollMotion(),
-                                    dismissible: DismissiblePane(
-                                      onDismissed: () {
-                                        state.deleteTodo(
-                                            state.matched[index].todoId);
-                                      },
-                                    ),
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: (context) {
-                                          int _todoId =
-                                              state.matched[index].todoId;
-                                          _showDialog(
-                                              context, state, _todoId, false);
+                            child: ScrollConfiguration(
+                              behavior: MyBehavior(),
+                              child: ListView.builder(
+                                itemCount: state.matched.length,
+                                itemBuilder: (context, index) {
+                                  return Slidable(
+                                    key: UniqueKey(),
+                                    endActionPane: ActionPane(
+                                      extentRatio: 0.3,
+                                      motion: const ScrollMotion(),
+                                      dismissible: DismissiblePane(
+                                        onDismissed: () {
+                                          state.deleteTodo(
+                                              state.matched[index].id);
                                         },
-                                        backgroundColor:
-                                            const Color(0xFFFE4A49),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.delete,
-                                      )
-                                    ],
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      state.updateTodoDone(
-                                          state.matched[index].todoId);
-                                      // setState(() {});
-                                    },
-                                    child: TodoWidget(
-                                      text: state.matched[index].title,
-                                      isDone: state.matched[index].isDone == 1
-                                          ? false
-                                          : true,
+                                      ),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) {
+                                            int _todoId =
+                                                state.matched[index].id;
+                                            _showDialog(
+                                                context, state, _todoId, false);
+                                          },
+                                          backgroundColor:
+                                              const Color(0xFFFE4A49),
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete,
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                );
-                              },
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        state.updateTodoDone(
+                                            state.matched[index].id);
+                                      },
+                                      child: TodoWidget(
+                                        text: state.matched[index].title,
+                                        isDone: state.matched[index].isDone == 0
+                                            ? false
+                                            : true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           );
                         },
@@ -332,7 +330,6 @@ class _TaskPageState extends State<TaskPage> {
                           state.deleteTask(id);
                           Navigator.pop(context);
                           Navigator.pop(context);
-                          //Navigator.pushNamed(context, "/");
                         }
                       } else {
                         if (id != 0) {
@@ -356,18 +353,3 @@ class _TaskPageState extends State<TaskPage> {
         });
   }
 }
-
-
-// if (_taskId != 0) {
-                                  //   state.addTodo(
-                                  //     title: value,
-                                  //     taskId: _taskId,
-                                  //   );
-                                  // } else {
-                                  //   _taskId = await state.insertTask(
-                                  //     title: _taskTitle,
-                                  //     desc: _taskDesc,
-                                  //     todoValue: value,
-                                  //   );
-                                  // }
-                                  // _todoFocus.requestFocus();
