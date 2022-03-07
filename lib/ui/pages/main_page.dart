@@ -31,7 +31,19 @@ class MainPageState extends State<MainPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      //
+                      //
+                      //
+                      // ToDo's Text
+                      //
+                      //
                       const Header(title: "ToDo`s"),
+                      //
+                      //
+                      //
+                      // List Tasks
+                      //
+                      //
                       ScrollConfiguration(
                         behavior: MyBehavior(),
                         child: Expanded(
@@ -68,6 +80,12 @@ class MainPageState extends State<MainPage> {
                       ),
                     ],
                   ),
+                  //
+                  //
+                  //
+                  // Add Floating Action Button
+                  //
+                  //
                   Positioned(
                     bottom: 24.0,
                     right: 0.0,

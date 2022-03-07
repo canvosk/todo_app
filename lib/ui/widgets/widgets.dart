@@ -147,17 +147,6 @@ class TodoWidget extends StatelessWidget {
   }
 }
 
-// Container(
-//             alignment: Alignment.centerRight,
-//             width: 15.0,
-//             height: 15.0,
-//             margin: const EdgeInsets.all(0),
-//             child: const Image(
-//               image: AssetImage("assets/images/delete_icon.png"),
-//               color: Color.fromARGB(255, 163, 163, 163),
-//             ),
-//           ),
-
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildOverscrollIndicator(

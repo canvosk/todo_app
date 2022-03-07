@@ -81,6 +81,13 @@ class TasksState with ChangeNotifier {
 
     log("Gelen id indeksi= " + index.toString());
 
+    if (title == "") {
+      title = "Untitled";
+    }
+    if (description == "") {
+      description = "No Description Added";
+    }
+
     tasks[index].title = title;
     tasks[index].description = description;
 

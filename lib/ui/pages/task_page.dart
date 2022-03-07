@@ -31,7 +31,6 @@ class _TaskPageState extends State<TaskPage> {
   String _taskDesc = "";
 
   bool _contentVisile = false;
-  bool didIt = false;
   int _taskId = 0;
 
   @override
@@ -45,7 +44,58 @@ class _TaskPageState extends State<TaskPage> {
     _titleFocus = FocusNode();
     _descriptionFocus = FocusNode();
     _todoFocus = FocusNode();
+
     super.initState();
+  }
+
+  void titleAction(var value, TasksState state) async {
+    if (value != "") {
+      if (_taskId == 0) {
+        _taskId = await state.insertTask(title: value);
+      } else {
+        state.updateTask(
+            id: _taskId, title: _taskTitle, description: _taskDesc);
+      }
+    }
+    _descriptionFocus.requestFocus();
+    setState(() {
+      _taskTitle = value;
+    });
+  }
+
+  void descAction(var value, TasksState state) async {
+    if (value != "") {
+      if (_taskId == 0) {
+        if (_taskTitle != "") {
+          _taskId = await state.insertTask(title: _taskTitle, desc: value);
+        } else {
+          _taskId = await state.insertTask(desc: value);
+        }
+      } else {
+        state.updateTask(id: _taskId, title: _taskTitle, description: value);
+        _taskDesc = value;
+      }
+      setState(() {
+        _taskDesc = value;
+      });
+      _todoFocus.requestFocus();
+    }
+  }
+
+  void todoAction(TasksState state, var value) async {
+    if (_taskId != 0) {
+      state.addTodo(
+        title: value,
+        taskId: _taskId,
+      );
+    } else {
+      _taskId = await state.insertTask(
+        title: _taskTitle,
+        desc: _taskDesc,
+        todoValue: value,
+      );
+    }
+    _todoFocus.requestFocus();
   }
 
   @override
@@ -65,6 +115,12 @@ class _TaskPageState extends State<TaskPage> {
                         padding: const EdgeInsets.only(top: 24.0, bottom: 6.0),
                         child: Row(
                           children: [
+                            //
+                            //
+                            //
+                            // Back Arrow
+                            //
+                            //
                             InkWell(
                               onTap: () {
                                 Navigator.pop(context);
@@ -77,6 +133,13 @@ class _TaskPageState extends State<TaskPage> {
                                 ),
                               ),
                             ),
+                            //
+                            //
+                            //
+                            //Title Text Field
+                            //
+                            //
+                            //
                             Expanded(
                               child: TextField(
                                 focusNode: _titleFocus,
@@ -86,21 +149,7 @@ class _TaskPageState extends State<TaskPage> {
                                   _taskTitle = value;
                                 },
                                 onSubmitted: (value) async {
-                                  if (value != "") {
-                                    if (_taskId == 0) {
-                                      _taskId =
-                                          await state.insertTask(title: value);
-                                    } else {
-                                      state.updateTask(
-                                          id: _taskId,
-                                          title: _taskTitle,
-                                          description: _taskDesc);
-                                    }
-                                  }
-                                  _descriptionFocus.requestFocus();
-                                  setState(() {
-                                    _taskTitle = value;
-                                  });
+                                  titleAction(value, state);
                                 },
                                 decoration: titleTextField,
                                 style: titleText,
@@ -111,7 +160,8 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                       //
                       //
-                      //degree side
+                      //
+                      //Desc Text Field
                       //
                       //
                       Visibility(
@@ -128,27 +178,7 @@ class _TaskPageState extends State<TaskPage> {
                               _taskDesc = value;
                             },
                             onSubmitted: (value) async {
-                              if (value != "") {
-                                if (_taskId == 0) {
-                                  if (_taskTitle != "") {
-                                    _taskId = await state.insertTask(
-                                        title: _taskTitle, desc: value);
-                                  } else {
-                                    _taskId =
-                                        await state.insertTask(desc: value);
-                                  }
-                                } else {
-                                  state.updateTask(
-                                      id: _taskId,
-                                      title: _taskTitle,
-                                      description: value);
-                                  _taskDesc = value;
-                                }
-                                setState(() {
-                                  _taskDesc = value;
-                                });
-                                _todoFocus.requestFocus();
-                              }
+                              descAction(value, state);
                             },
                             decoration: subtitleTextField,
                           ),
@@ -156,8 +186,9 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                       //
                       //
+                      //ToDo List
                       //
-
+                      //
                       FutureBuilder(
                         initialData: [],
                         future: state.getTodo(_taskId),
@@ -181,7 +212,7 @@ class _TaskPageState extends State<TaskPage> {
                                       SlidableAction(
                                         onPressed: (context) {
                                           int _todoId =
-                                              state.todos[index].todoId;
+                                              state.matched[index].todoId;
                                           _showDialog(
                                               context, state, _todoId, false);
                                         },
@@ -212,7 +243,12 @@ class _TaskPageState extends State<TaskPage> {
                           );
                         },
                       ),
-
+                      //
+                      //
+                      //
+                      //Enter ToDo Items Text Field
+                      //
+                      //
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Row(
@@ -221,14 +257,7 @@ class _TaskPageState extends State<TaskPage> {
                               width: 20.0,
                               height: 20.0,
                               margin: const EdgeInsets.only(right: 12.0),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(6.0),
-                                border: Border.all(
-                                  color: const Color(0xFF86829D),
-                                  width: 1.5,
-                                ),
-                              ),
+                              decoration: enterTodoDecoration,
                               child: const Image(
                                 image:
                                     AssetImage('assets/images/check_icon.png'),
@@ -239,25 +268,9 @@ class _TaskPageState extends State<TaskPage> {
                                 focusNode: _todoFocus,
                                 controller: TextEditingController()..text = "",
                                 onSubmitted: (value) async {
-                                  if (_taskId != 0) {
-                                    state.addTodo(
-                                      title: value,
-                                      taskId: _taskId,
-                                    );
-                                  } else {
-                                    _taskId = await state.insertTask(
-                                      title: _taskTitle,
-                                      desc: _taskDesc,
-                                      todoValue: value,
-                                    );
-                                  }
-                                  //setState(() {});
-                                  _todoFocus.requestFocus();
+                                  todoAction(state, value);
                                 },
-                                decoration: const InputDecoration(
-                                  hintText: "Enter Todo item...",
-                                  border: InputBorder.none,
-                                ),
+                                decoration: enterTodoTextField,
                               ),
                             ),
                           ],
@@ -265,6 +278,12 @@ class _TaskPageState extends State<TaskPage> {
                       ),
                     ],
                   ),
+                  //
+                  //
+                  //Delete Floating Button
+                  //
+                  //
+                  //
                   Visibility(
                     visible: _contentVisile,
                     child: Positioned(
@@ -274,9 +293,6 @@ class _TaskPageState extends State<TaskPage> {
                         onTap: () {
                           if (_taskId != 0) {
                             _showDialog(context, state, _taskId, true);
-                            if (didIt == true) {
-                              Navigator.pop(context);
-                            }
                           }
                         },
                         child: const FloatingButton(
@@ -316,6 +332,7 @@ class _TaskPageState extends State<TaskPage> {
                         if (id != 0) {
                           state.deleteTask(id);
                           Navigator.pop(context);
+                          Navigator.pop(context);
                           //Navigator.pushNamed(context, "/");
                         }
                       } else {
@@ -324,17 +341,11 @@ class _TaskPageState extends State<TaskPage> {
                           Navigator.pop(context);
                         }
                       }
-                      setState(() {
-                        didIt = true;
-                      });
                     },
                     child: const Text("Yes"),
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        didIt = false;
-                      });
                       Navigator.pop(context);
                     },
                     child: const Text("No"),
@@ -343,12 +354,21 @@ class _TaskPageState extends State<TaskPage> {
               )
             ],
           );
-        }).then((value) {
-      if (value == true) {
-        setState(() {
-          didIt = true;
         });
-      }
-    });
   }
 }
+
+
+// if (_taskId != 0) {
+                                  //   state.addTodo(
+                                  //     title: value,
+                                  //     taskId: _taskId,
+                                  //   );
+                                  // } else {
+                                  //   _taskId = await state.insertTask(
+                                  //     title: _taskTitle,
+                                  //     desc: _taskDesc,
+                                  //     todoValue: value,
+                                  //   );
+                                  // }
+                                  // _todoFocus.requestFocus();
