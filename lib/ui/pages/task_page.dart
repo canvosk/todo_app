@@ -265,7 +265,9 @@ class _TaskPageState extends State<TaskPage> {
                                 focusNode: _todoFocus,
                                 controller: TextEditingController()..text = "",
                                 onSubmitted: (value) async {
-                                  todoAction(state, value);
+                                  if (value.isNotEmpty) {
+                                    todoAction(state, value);
+                                  }
                                 },
                                 decoration: enterTodoTextField,
                               ),
