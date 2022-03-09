@@ -1,16 +1,19 @@
-# todo_app
+# ToDo's Application
 
-A new Flutter project.
+I made this app to improve myself. 
 
-## Getting Started
+I used provider state management on this app.
 
-This project is a starting point for a Flutter application.
+I used sqflite for database.
 
-A few resources to get you started if this is your first Flutter project:
+I used flutter_slidable package to delete todo's.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# Some screenshots from application.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Screenshot_1646758867](https://user-images.githubusercontent.com/61112845/157494149-21d28e06-5fd2-40cd-a957-4c6140f01a19.png)
+![Screenshot_1646758933](https://user-images.githubusercontent.com/61112845/157494474-a1d6c8ea-bfc2-4651-86d3-a2ddf0b6d85a.png)
+
+![Screenshot_1646758901](https://user-images.githubusercontent.com/61112845/157494547-6670c29a-fbb5-40b8-bb6e-a20ee05a06ae.png)
+![Screenshot_1646758905](https://user-images.githubusercontent.com/61112845/157494558-78da44fb-3a7d-4390-a655-998c6d8ce675.png)
+
+![Screenshot_1646758913](https://user-images.githubusercontent.com/61112845/157494577-7e3012cb-89f2-4ed3-9068-bcf4cb18493c.png)
